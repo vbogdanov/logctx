@@ -1,0 +1,90 @@
+# Options for analysis running.
+run:
+  timeout: 2m
+  go: '1.19'
+# All available settings of specific linters.
+linters-settings:
+  revive:
+    rules:
+      # https://github.com/mgechev/revive/blob/master/RULES_DESCRIPTIONS.md#argument-limit
+      - name: argument-limit
+        severity: warning
+        disabled: false
+        arguments: [4]
+      # https://github.com/mgechev/revive/blob/master/RULES_DESCRIPTIONS.md#function-result-limit
+      - name: function-result-limit
+        severity: warning
+        disabled: false
+        arguments: [2]
+  wrapcheck:
+    ignorePackageGlobs:
+      # ignore this package, as it wraps errors to add logging context
+      - github.com/vbogdanov/logctx
+linters:
+  disable-all: true
+  enable:
+    - errcheck
+    - gosimple
+    - govet
+    - ineffassign
+    - staticcheck
+    - typecheck
+    - unused
+    - asasalint
+    - asciicheck
+    - bidichk
+    - bodyclose
+    - containedctx
+    - contextcheck
+    - cyclop
+    - decorder
+    - depguard
+    - dogsled
+    - dupl
+    - durationcheck
+    - errchkjson
+    - errname
+    - errorlint
+    - execinquery
+    - exhaustive
+    - exportloopref
+    - forcetypeassert
+    - funlen
+    - gci
+    - gochecknoinits
+    - gocognit
+    - goconst
+    - gocritic
+    - gocyclo
+    - godot
+    - gofmt
+    - goimports
+    - gomnd
+    - goprintffuncname
+    - gosec
+    - grouper
+    - importas
+    - interfacebloat
+    - ireturn
+    - lll
+    - maintidx
+    - misspell
+    - nakedret
+    - nestif
+    - nilerr
+    - nilnil
+    - noctx
+    - nosprintfhostport
+    - prealloc
+    - predeclared
+    - reassign
+    - revive
+    - stylecheck
+    - tenv
+    - testableexamples
+    - testpackage
+    - unconvert
+    - unparam
+    - usestdlibvars
+    - whitespace
+    - wrapcheck
