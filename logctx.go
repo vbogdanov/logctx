@@ -1,0 +1,66 @@
+// Package logctx, short for Logging Context, provides utils to keep additional logging context in context.Context
+// and use it.
+package logctx
+
+import (
+	"context"
+	"errors"
+
+	"go.uber.org/zap"
+)
+
+type keyType struct{}
+
+var (
+	key           = &keyType{}
+	DefaultLogger *zap.Logger
+)
+
+func newCtx(ctx context.Context, l *zap.Logger) context.Context {
+	return context.WithValue(ctx, key, l)
+}
+
+// From provides a *zap.Logger from the given context.
+// New logger is created if one is not associated with the context.
+func From(ctx context.Context) *zap.Logger {
+	l, ok := ctx.Value(key).(*zap.Logger)
+	if !ok {
+		return DefaultLogger
+	}
+	return l
+}
+
+// Sugar provides a *zap.SugaredLogger from the given context.
+// New logger is created if one is not associated with the context.
+func Sugar(ctx context.Context) *zap.SugaredLogger {
+	return From(ctx).Sugar()
+}
+
+// With enhances the logging context with the given args. Similar to the [*zap.SugaredLogger] With method.
+func With(ctx context.Context, args ...interface{}) context.Context {
+	return newCtx(ctx, Sugar(ctx).With(args...).Desugar())
+}
+
+// WithFields enhances the logging context with the provided fields.
+// See [go.uber.org/zap.Logger#With] method
+//
+// [go.uber.org/zap.Logger#With]: https://pkg.go.dev/go.uber.org/zap@v1.24.0#Logger.With
+func WithFields(ctx context.Context, fields ...zap.Field) context.Context {
+	return newCtx(ctx, From(ctx).With(fields...))
+}
+
+// ForError provides a new [*zap.Logger] with the error already added as Field.
+// See [From] method.
+func ForError(ctx context.Context, err error) *zap.Logger {
+	var (
+		l    *zap.Logger
+		elog *enhancedError
+	)
+	if errors.As(err, &elog) {
+		l = elog.logger
+	} else {
+		l = From(ctx)
+	}
+	l.With(zap.Error(err))
+	return l
+}
