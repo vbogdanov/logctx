@@ -30,6 +30,15 @@ func From(ctx context.Context) *zap.Logger {
 	return l
 }
 
+// Debug simplifies logging simple debug messages.
+// NB: if ctx == nil, DefaultLogger is used instead of From(ctx).
+func Debug(ctx context.Context, msg string, fields ...zap.Field) {
+	if ctx == nil {
+		DefaultLogger.Debug(msg, fields...)
+	}
+	From(ctx).Debug(msg, fields...)
+}
+
 // Sugar provides a *zap.SugaredLogger from the given context.
 // New logger is created if one is not associated with the context.
 func Sugar(ctx context.Context) *zap.SugaredLogger {
