@@ -12,8 +12,11 @@ import (
 type keyType struct{}
 
 var (
-	key           = &keyType{}
+	key = &keyType{}
+
+	// exporter global settings. Modify only during initialization:
 	DefaultLogger *zap.Logger
+	AddCtxFields  = false
 )
 
 func newCtx(ctx context.Context, l *zap.Logger) context.Context {
@@ -26,6 +29,9 @@ func From(ctx context.Context) *zap.Logger {
 	l, ok := ctx.Value(key).(*zap.Logger)
 	if !ok {
 		return DefaultLogger
+	}
+	if AddCtxFields {
+		l = l.With(CtxField(ctx))
 	}
 	return l
 }
@@ -67,6 +73,9 @@ func ForError(ctx context.Context, err error) *zap.Logger {
 	)
 	if errors.As(err, &elog) {
 		l = elog.logger
+		if AddCtxFields {
+			l = l.With(CtxField(ctx))
+		}
 	} else {
 		l = From(ctx)
 	}
