@@ -15,8 +15,11 @@ var (
 	key = &keyType{}
 
 	// exporter global settings. Modify only during initialization:
-	DefaultLogger *zap.Logger
-	AddCtxFields  = false
+
+	// DefaultLogger is the logger to use if the provided ctx does not contain one.
+	DefaultLogger = zap.NewNop()
+	// AddCtxFields defines whether the context to be added as a Field in the log to be returned.
+	AddCtxFields = false
 )
 
 func newCtx(ctx context.Context, l *zap.Logger) context.Context {
