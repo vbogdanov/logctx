@@ -82,6 +82,6 @@ func ForError(ctx context.Context, err error) *zap.Logger {
 	} else {
 		l = From(ctx)
 	}
-	l.With(zap.Error(err))
+	l = l.With(zap.Error(err))
 	return l
 }
