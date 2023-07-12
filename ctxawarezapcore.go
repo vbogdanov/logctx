@@ -105,7 +105,7 @@ func (s *CtxAwareZapCore) Write(ent zapcore.Entry, fields []zapcore.Field) error
 	if ctx == nil {
 		return s.Core.Write(ent, fields)
 	}
-	extendedFields := make([]zapcore.Field, 0, len(fields)+extraCapacity)
+	extendedFields := make([]zapcore.Field, len(fields), len(fields)+extraCapacity)
 	// copy to avoid modifying the original in the callback
 	_ = copy(extendedFields, fields)
 	extendedFields = s.OnLogWrite(s.latestCtx, ent, extendedFields)
